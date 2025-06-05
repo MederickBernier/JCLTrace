@@ -1,0 +1,68 @@
+@page "/graph"
+@using JCLTrace.UI.Models
+@using JCLTrace.UI.Services
+@inject JCLoaderService Loader
+
+<h3>JCL Job Flow</h3>
+
+@if (jobMap == null)
+{
+    <p><em>Loading job map...</em></p>
+}
+else
+{
+    @foreach (var job in jobMap.Jobs)
+    {
+        <div class="card my-3">
+            <div class="card-header bg-dark text-white">
+                Job: @job.JobName
+            </div>
+            <div class="card-body">
+                @foreach (var step in job.Steps)
+                {
+                    <div class="mb-2">
+                        <strong>@step.StepName</strong> → <code>@step.Program</code>
+
+                        @if (!string.IsNullOrWhiteSpace(step.ProcName))
+                        {
+                            <div class="text-muted ms-3">Proc: @step.ProcName</div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(step.DdName))
+                        {
+                            <div class="text-muted ms-3">DD: @step.DdName</div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(step.Description))
+                        {
+                            <div class="text-muted ms-3">Desc: @step.Description</div>
+                        }
+                    </div>
+                }
+
+                @if (job.Calls?.Any() == true)
+                {
+                    <div class="mt-2">🔗 Calls: @string.Join(", ", job.Calls)</div>
+                }
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private JclJobMap? jobMap;
+
+    protected override async Task OnInitializedAsync()
+    {
+        jobMap = await Loader.LoadMockJobMap();
+
+        if (jobMap == null)
+        {
+            Console.WriteLine("⚠️ Job map is null");
+        }
+        else
+        {
+            Console.WriteLine($"✅ Loaded {jobMap.Jobs.Count} jobs.");
+        }
+    }
+}
