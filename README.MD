@@ -37,7 +37,7 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/YOUR-USERNAME/JCLTrace.git
+   git clone https://github.com/MederickBernier/JCLTrace.git
    ```
 
 2. **Navigate to the UI project**
@@ -48,11 +48,6 @@
 3. **Run the Blazor Server app**
    ```bash
    dotnet run
-   ```
-
-4. **Open your browser**
-   ```
-   http://localhost:5000/graph
    ```
 
 ---
