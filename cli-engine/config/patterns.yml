@@ -1,0 +1,4 @@
+job: "^//\\w+\\s+JOB"
+exec: "^//\\w+\\s+EXEC"
+dd: "^//\\w+\\s+DD"
+submit: "IKJEFT01"
