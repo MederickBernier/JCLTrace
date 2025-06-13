@@ -6,20 +6,24 @@ import (
 	"strings"
 )
 
+// FileMatches returns true if the file has a supported JCL-related extension.
+func FileMatches(path string) bool {
+	ext := strings.ToLower(filepath.Ext(path))
+	return ext == ".jcl" || ext == ".proc"
+}
+
+// FindJCLFiles walks the given root and returns a list of .jcl and .proc files.
 func FindJCLFiles(root string) []string {
 	var files []string
 
 	filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			return err // Exit if any access error happens
+			return err // Exit on any file access error
 		}
-
-		// Defensive: skip any nil info
-		if info == nil {
+		if info == nil || info.IsDir() {
 			return nil
 		}
-
-		if !info.IsDir() && (strings.HasSuffix(path, ".jcl") || strings.HasSuffix(path, ".proc")) {
+		if FileMatches(path) {
 			files = append(files, path)
 		}
 		return nil

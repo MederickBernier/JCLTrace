@@ -9,14 +9,30 @@ import (
 )
 
 func main() {
-	os.MkdirAll("../parsed-output", os.ModePerm)
+	ensureOutputFolders()
 
 	rootPath := "../jcl-files"
 	files := utils.FindJCLFiles(rootPath)
 
 	for _, file := range files {
-		fmt.Printf("Parsing %s\n", file)
-		jobMap := parser.ParseJCLFile(file)
-		utils.SaveJSON(jobMap, file)
+		processJobFile(file)
+	}
+}
+
+// ensureOutputFolders creates necessary directories
+func ensureOutputFolders() {
+	os.MkdirAll("../parsed-output", os.ModePerm)
+	os.MkdirAll("../parsed-output/errors", os.ModePerm)
+}
+
+// processJobFile parses, saves, and logs one JCL file
+func processJobFile(file string) {
+	fmt.Printf("Parsing %s\n", file)
+
+	jobMap := parser.ParseJCLFile(file)
+	utils.SaveJSON(jobMap, file)
+
+	if len(jobMap.Errors) > 0 {
+		utils.LogErrors(jobMap, file)
 	}
 }
